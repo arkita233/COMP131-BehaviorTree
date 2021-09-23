@@ -1,4 +1,5 @@
 from Node import assign_nodes
+from ParentNodes import assign_parents
 
 
 class Robot:
@@ -16,5 +17,8 @@ class Robot:
 
 
 def boot_robot(board):
+    global cleaner
     cleaner = Robot(board)
     assign_nodes(cleaner)
+    assign_parents(cleaner)
+    return cleaner

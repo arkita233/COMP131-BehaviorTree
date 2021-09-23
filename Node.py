@@ -1,5 +1,9 @@
 import time
 from Status import TaskStatus
+from random import randint
+from random import seed
+
+seed(time)
 
 
 def assign_nodes(robot):
@@ -28,7 +32,43 @@ class BatteryCheck(Condition):
             return TaskStatus.SUCCESS
         else:
             print("Over 30% FALSE\n")
-            return TaskStatus.FAILED
+            return TaskStatus.FAILURE
+
+
+class GeneralClean(Condition):
+    def run(self):
+        print("Check General Clean Command...")
+        time.sleep(1)
+        if cleaner.GENERAL_CLEANING:
+            print("General Clean TRUE\n")
+            return TaskStatus.SUCCESS
+        else:
+            print("General Clean FALSE\n")
+            return TaskStatus.FAILURE
+
+
+class Spot(Condition):
+    def run(self):
+        print("Check Spot Command...")
+        time.sleep(1)
+        if cleaner.SPOT_CLEANING:
+            print("Spot Clean TRUE\n")
+            return TaskStatus.SUCCESS
+        else:
+            print("Spot Clean FALSE\n")
+            return TaskStatus.FAILURE
+
+
+class DustySpot(Condition):
+    def run(self):
+        print("Check Spot Command...")
+        time.sleep(1)
+        if cleaner.DUSTY_SPOT:
+            print("DUSTY Spot Clean TRUE\n")
+            return TaskStatus.SUCCESS
+        else:
+            print("DUSTY Spot Clean FALSE\n")
+            return TaskStatus.FAILURE
 
 
 class Task(Node):
@@ -42,9 +82,9 @@ class FindHome(Task):
         time.sleep(1)
 
         print("Finding home path......")
-        cleaner["HOME_PATH"] = input("Please enter a home path......")
+        cleaner.HOME_PATH = input("Please enter a home path......")
 
-        if cleaner["HOME_PATH"]:
+        if cleaner.HOME_PATH:
             print("Find path success")
             return TaskStatus.SUCCESS
         else:
@@ -59,9 +99,78 @@ class GoHome(Task):
 
         print("GO home......")
 
-        if cleaner["HOME_PATH"]:
+        if cleaner.HOME_PATH:
             print("FGO HOME success")
             return TaskStatus.SUCCESS
         else:
             print("Error GO HOME")
             return TaskStatus.FAILURE
+
+
+class DoNothing(Task):
+    def run(self):
+        time.sleep(1)
+
+        print("Do Nothing......")
+
+        return TaskStatus.SUCCESS
+
+
+class CleanSpot(Task):
+    def run(self, done):
+        time.sleep(1)
+        if not done:
+            print("Keep cleaning spots")
+            return TaskStatus.RUNNING
+        else:
+            print("Clean spots succeed")
+            return TaskStatus.SUCCESS
+
+
+class DoneSpot(Task):
+
+    # run function
+    def run(self):
+        time.sleep(1)
+
+        print("Done Spot Succeed")
+        cleaner.SPOT_CLEANING = False
+        return TaskStatus.SUCCESS
+
+
+class DoneGeneral(Task):
+
+    # run function
+    def run(self):
+        time.sleep(1)
+
+        print("Done General Succeed ")
+        cleaner.GENERAL_CLEANING = False
+        return TaskStatus.SUCCESS
+
+
+class CleanFloor(Task):
+
+    # run function
+    def run(self):
+        # Target: clear spot
+        time.sleep(1)
+
+        value = randint(1, 10)
+        if value <= 5:
+            print("Clean Floor failed (1-5), Random#: " + str(value))
+            return TaskStatus.FAILURE
+        else:
+            print("Clean Floor Succeed (6-10), Random#: " + str(value))
+            cleaner.GENERAL_CLEANING = False
+            return TaskStatus.SUCCESS
+
+
+class Dock(Task):
+    # run function
+    def run(self):
+        # Target: clear spot
+        time.sleep(1)
+        print("Recharging.....")
+        cleaner.BATTERY_LEVEL = 100
+        return TaskStatus.SUCCESS
