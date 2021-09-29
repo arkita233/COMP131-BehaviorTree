@@ -2,6 +2,7 @@ from Node import *
 
 from ParentNodes import *
 
+# build tree, run and return it
 
 class Tree:
     def run(self):

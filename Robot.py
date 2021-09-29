@@ -2,6 +2,10 @@ from Node import assign_nodes
 from ParentNodes import assign_parents
 
 
+# the cleaner itself
+# we assign it to all nodes
+# it store the black board information
+
 class Robot:
     # constructor
     def __init__(self, dic):

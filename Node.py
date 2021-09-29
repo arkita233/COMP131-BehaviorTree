@@ -3,7 +3,9 @@ from Status import TaskStatus
 from random import randint
 from random import seed
 
-seed(time)
+
+# leaf nodes with no child
+# task and condition
 
 
 def assign_nodes(robot):
@@ -28,10 +30,10 @@ class BatteryCheck(Condition):
         print("Check battery...")
         time.sleep(1)
         if cleaner.BATTERY_LEVEL < 30:
-            print("Below 30% TRUE\n")
+            print("Below 30% \n")
             return TaskStatus.SUCCESS
         else:
-            print("Over 30% FALSE\n")
+            print("Over 30% \n")
             return TaskStatus.FAILURE
 
 
@@ -61,13 +63,17 @@ class Spot(Condition):
 
 class DustySpot(Condition):
     def run(self):
-        print("Check Spot Command...")
+        print("Detect Dusty Spot...")
         time.sleep(1)
-        if cleaner.DUSTY_SPOT:
-            print("DUSTY Spot Clean TRUE\n")
+
+        value = randint(1, 10)  # random value to decide whether detected or not
+        if value <= 5:
+            print("DUSTY Spot detected (1-5), Random#: " + str(value))
+            cleaner.DUSTY_SPOT = 1
             return TaskStatus.SUCCESS
         else:
-            print("DUSTY Spot Clean FALSE\n")
+            print("DUSTY Spot NOT detected (6-10), Random#: " + str(value))
+            cleaner.DUSTY_SPOT = 0
             return TaskStatus.FAILURE
 
 
@@ -82,7 +88,7 @@ class FindHome(Task):
         time.sleep(1)
 
         print("Finding home path......")
-        cleaner.HOME_PATH = input("Please enter a home path......")
+        cleaner.HOME_PATH = input("Please enter a home path......: ")
 
         if cleaner.HOME_PATH:
             print("Find path success")
@@ -134,7 +140,7 @@ class DoneSpot(Task):
         time.sleep(1)
 
         print("Done Spot Succeed")
-        cleaner.SPOT_CLEANING = False
+        cleaner.SPOT_CLEANING = 0
         return TaskStatus.SUCCESS
 
 
@@ -145,7 +151,7 @@ class DoneGeneral(Task):
         time.sleep(1)
 
         print("Done General Succeed ")
-        cleaner.GENERAL_CLEANING = False
+        cleaner.GENERAL_CLEANING = 0
         return TaskStatus.SUCCESS
 
 
